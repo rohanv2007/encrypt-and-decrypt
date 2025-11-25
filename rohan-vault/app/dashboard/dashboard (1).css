@@ -1,0 +1,8 @@
+/* app/dashboard/dashboard.css */
+.upload-card{margin:18px 0;padding:14px}
+.upload-card input[type=file]{display:block;margin-bottom:10px}
+.upload-card input[type=password]{padding:8px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);width:100%;margin-bottom:8px}
+.file-list table{width:100%;border-collapse:collapse}
+.file-list th, .file-list td{padding:10px;border-bottom:1px solid rgba(255,255,255,0.02)}
+.btn-small{background:var(--btn);color:#fff;padding:6px 10px;border-radius:8px;border:0;margin-right:8px}
+.btn-small.delete{background:#ff4b2b}

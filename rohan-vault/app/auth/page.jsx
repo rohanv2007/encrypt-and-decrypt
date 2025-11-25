@@ -1,20 +1,29 @@
 "use client";
 
-import Script from "next/script";
-import "./auth.css";
-import "./auth.js";
-import { supabase } from "../../lib/supabaseClient";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { useState } from "react";
+import { supabase } from "../../lib/supabaseClient";
+import "./auth.css";
 
-// Disable static rendering / SSR for this page
+// Disable static rendering fully
 export const dynamic = "force-dynamic";
 
 export default function AuthPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
-  // SIGN UP
+  // ⭐ Correct animation logic (SSR-safe)
+  useEffect(() => {
+    const container = document.getElementById("container");
+    const signUpButton = document.getElementById("signUp");
+    const signInButton = document.getElementById("signIn");
+
+    if (!container || !signUpButton || !signInButton) return;
+
+    signUpButton.onclick = () => container.classList.add("right-panel-active");
+    signInButton.onclick = () => container.classList.remove("right-panel-active");
+  }, []);
+
   async function handleSignup(e) {
     e.preventDefault();
     setLoading(true);
@@ -30,12 +39,11 @@ export default function AuthPage() {
     });
 
     setLoading(false);
-    if (error) return alert("Error: " + error.message);
 
-    alert("Account created! Please sign in.");
+    if (error) return alert(error.message);
+    alert("Account created! Sign in now.");
   }
 
-  // SIGN IN
   async function handleSignin(e) {
     e.preventDefault();
     setLoading(true);
@@ -50,18 +58,13 @@ export default function AuthPage() {
 
     setLoading(false);
 
-    if (error) return alert("Login failed: " + error.message);
-
-    const redirect = localStorage.getItem("afterAuth");
-    router.push(redirect || "/dashboard");
+    if (error) return alert(error.message);
+    router.push("/dashboard");
   }
 
   return (
     <>
-      {/* Load animation script */}
-      <Script src="./auth.js" strategy="afterInteractive" />
-
-      {/* Back button */}
+      {/* Back Button */}
       <button
         onClick={() => router.push("/")}
         style={{
@@ -81,46 +84,42 @@ export default function AuthPage() {
       </button>
 
       <div className="container" id="container">
-        
-        {/* SIGN UP */}
+
         <div className="form-container sign-up-container">
           <form onSubmit={handleSignup}>
             <h1>Create Account</h1>
-            <input type="text" placeholder="Name" required />
-            <input type="email" placeholder="Email" required />
-            <input type="password" placeholder="Password" required />
+            <input type="text" placeholder="Name" />
+            <input type="email" placeholder="Email" />
+            <input type="password" placeholder="Password" />
             <button disabled={loading}>
               {loading ? "Processing..." : "Sign Up"}
             </button>
           </form>
         </div>
 
-        {/* SIGN IN */}
         <div className="form-container sign-in-container">
           <form onSubmit={handleSignin}>
-            <h1>Sign In</h1>
-            <input type="email" placeholder="Email" required />
-            <input type="password" placeholder="Password" required />
-            <a href="#">Forgot password?</a>
+            <h1>Sign in</h1>
+            <input type="email" placeholder="Email" />
+            <input type="password" placeholder="Password" />
             <button disabled={loading}>
               {loading ? "Processing..." : "Sign In"}
             </button>
           </form>
         </div>
 
-        {/* OVERLAY */}
         <div className="overlay-container">
           <div className="overlay">
-            
+
             <div className="overlay-panel overlay-left">
               <h1>Welcome Back!</h1>
-              <p>To stay connected, please sign in</p>
+              <p>Login with your personal info</p>
               <button className="ghost" id="signIn">Sign In</button>
             </div>
 
             <div className="overlay-panel overlay-right">
               <h1>Hello, Friend!</h1>
-              <p>Enter your details and start your journey</p>
+              <p>Create your account</p>
               <button className="ghost" id="signUp">Sign Up</button>
             </div>
 

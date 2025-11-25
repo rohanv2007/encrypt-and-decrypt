@@ -3,8 +3,8 @@
 import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { supabase } from "../lib/supabaseClient";
-import NavBar from "./components/NavBar";
-import Toast from "./components/Toast";
+import NavBar from "./components/NavBar.jsx";
+import Toast from "./components/Toast.jsx";
 import "../public/home.css";
 
 export default function HomePage() {

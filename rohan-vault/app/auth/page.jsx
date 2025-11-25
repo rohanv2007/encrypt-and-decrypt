@@ -1,6 +1,5 @@
 "use client";
 
-import dynamic from "next/dynamic";
 import Script from "next/script";
 import "./auth.css";
 import "./auth.js";
@@ -8,14 +7,14 @@ import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-// 👇 disable SSR completely for this page
+// Disable static rendering / SSR for this page
 export const dynamic = "force-dynamic";
-export const fetchCache = "force-no-store";
 
-function AuthComponent() {
+export default function AuthPage() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
+  // SIGN UP
   async function handleSignup(e) {
     e.preventDefault();
     setLoading(true);
@@ -31,12 +30,12 @@ function AuthComponent() {
     });
 
     setLoading(false);
-
     if (error) return alert("Error: " + error.message);
 
     alert("Account created! Please sign in.");
   }
 
+  // SIGN IN
   async function handleSignin(e) {
     e.preventDefault();
     setLoading(true);
@@ -59,6 +58,7 @@ function AuthComponent() {
 
   return (
     <>
+      {/* Load animation script */}
       <Script src="./auth.js" strategy="afterInteractive" />
 
       {/* Back button */}
@@ -81,7 +81,7 @@ function AuthComponent() {
       </button>
 
       <div className="container" id="container">
-
+        
         {/* SIGN UP */}
         <div className="form-container sign-up-container">
           <form onSubmit={handleSignup}>
@@ -111,7 +111,7 @@ function AuthComponent() {
         {/* OVERLAY */}
         <div className="overlay-container">
           <div className="overlay">
-
+            
             <div className="overlay-panel overlay-left">
               <h1>Welcome Back!</h1>
               <p>To stay connected, please sign in</p>
@@ -131,7 +131,3 @@ function AuthComponent() {
     </>
   );
 }
-
-export default dynamic(() => Promise.resolve(AuthComponent), {
-  ssr: false, // ❌ disable SSR
-});

@@ -1,5 +1,6 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Script from "next/script";
 import "./auth.css";
 import "./auth.js";
@@ -7,7 +8,11 @@ import { supabase } from "../../lib/supabaseClient";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 
-export default function AuthPage() {
+// 👇 disable SSR completely for this page
+export const dynamic = "force-dynamic";
+export const fetchCache = "force-no-store";
+
+function AuthComponent() {
   const router = useRouter();
   const [loading, setLoading] = useState(false);
 
@@ -22,14 +27,13 @@ export default function AuthPage() {
     const { error } = await supabase.auth.signUp({
       email,
       password,
-      options: {
-        data: { name },
-      },
+      options: { data: { name } },
     });
 
     setLoading(false);
 
     if (error) return alert("Error: " + error.message);
+
     alert("Account created! Please sign in.");
   }
 
@@ -55,10 +59,9 @@ export default function AuthPage() {
 
   return (
     <>
-      {/* Animation script */}
       <Script src="./auth.js" strategy="afterInteractive" />
 
-      {/* Back to Home */}
+      {/* Back button */}
       <button
         onClick={() => router.push("/")}
         style={{
@@ -71,7 +74,7 @@ export default function AuthPage() {
           background: "#333",
           color: "white",
           cursor: "pointer",
-          zIndex: 999
+          zIndex: 999,
         }}
       >
         ← Back
@@ -79,49 +82,45 @@ export default function AuthPage() {
 
       <div className="container" id="container">
 
-        {/* Sign Up */}
+        {/* SIGN UP */}
         <div className="form-container sign-up-container">
           <form onSubmit={handleSignup}>
             <h1>Create Account</h1>
-
             <input type="text" placeholder="Name" required />
             <input type="email" placeholder="Email" required />
             <input type="password" placeholder="Password" required />
-
             <button disabled={loading}>
               {loading ? "Processing..." : "Sign Up"}
             </button>
           </form>
         </div>
 
-        {/* Sign In */}
+        {/* SIGN IN */}
         <div className="form-container sign-in-container">
           <form onSubmit={handleSignin}>
             <h1>Sign In</h1>
-
             <input type="email" placeholder="Email" required />
             <input type="password" placeholder="Password" required />
-
-            <a href="#">Forgot your password?</a>
+            <a href="#">Forgot password?</a>
             <button disabled={loading}>
               {loading ? "Processing..." : "Sign In"}
             </button>
           </form>
         </div>
 
-        {/* Overlay Panels */}
+        {/* OVERLAY */}
         <div className="overlay-container">
           <div className="overlay">
 
             <div className="overlay-panel overlay-left">
               <h1>Welcome Back!</h1>
-              <p>To keep connected, please login with your personal info</p>
+              <p>To stay connected, please sign in</p>
               <button className="ghost" id="signIn">Sign In</button>
             </div>
 
             <div className="overlay-panel overlay-right">
               <h1>Hello, Friend!</h1>
-              <p>Enter your details and start your journey with us</p>
+              <p>Enter your details and start your journey</p>
               <button className="ghost" id="signUp">Sign Up</button>
             </div>
 
@@ -132,3 +131,7 @@ export default function AuthPage() {
     </>
   );
 }
+
+export default dynamic(() => Promise.resolve(AuthComponent), {
+  ssr: false, // ❌ disable SSR
+});

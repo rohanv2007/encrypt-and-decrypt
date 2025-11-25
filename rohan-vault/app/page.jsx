@@ -7,7 +7,8 @@ import { supabase } from "../lib/supabaseClient";
 import NavBar from "./components/Navbar.jsx";
 import Toast from "./components/Toast.jsx";
 
-import "../public/home.css";
+import "@/public/home.css";
+
 
 
 export default function HomePage() {

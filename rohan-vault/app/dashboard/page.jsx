@@ -4,8 +4,9 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import {
   encryptFileWithPassword,
-  decryptBlobWithPassword,
-} from "@/lib/cryptoClient";
+  decryptBlobWithPassword
+} from "../../lib/cryptoClient";
+
 
 export default function Dashboard() {
   const [user, setUser] = useState(null);
@@ -177,3 +178,4 @@ export default function Dashboard() {
     </div>
   );
 }
+

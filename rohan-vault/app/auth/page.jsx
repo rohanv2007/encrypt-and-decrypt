@@ -2,7 +2,7 @@
 
 import Script from "next/script";
 
-import { supabase } from "@/lib/supabaseClient";
+import { supabase } from "../../lib/supabaseClient";
 
 export default function AuthPage() {
   return (
@@ -96,3 +96,4 @@ export default function AuthPage() {
     </>
   );
 }
+

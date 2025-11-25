@@ -1,85 +1,83 @@
-// app/auth/page.jsx
 "use client";
 
-import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
+import { useEffect } from "react";
+import Script from "next/script";
 import { supabase } from "../../lib/supabaseClient";
 import "./auth.css";
-import Toast from "../components/Toast";
 
 export default function AuthPage() {
-  const router = useRouter();
-  const [mode, setMode] = useState("login"); // login or signup
-  const [toast, setToast] = useState(null);
-  const [loading, setLoading] = useState(false);
 
-  useEffect(() => {
-    // if already logged in -> redirect to dashboard or saved route
-    supabase.auth.getUser().then((res) => {
-      const user = res?.data?.user;
-      if (user) {
-        const after = (typeof window !== "undefined" && localStorage.getItem("afterAuth")) || "/dashboard";
-        router.push(after);
-      }
-    });
-  }, []);
+  // SIGN UP
+  async function handleSignup(e) {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
 
-  function notify(msg, type="info") {
-    setToast({ msg, type });
-    setTimeout(()=>setToast(null),3500);
+    const { error } = await supabase.auth.signUp({ email, password });
+
+    if (error) alert(error.message);
+    else alert("Account created. Please sign in.");
   }
 
-  async function handleSubmit(e) {
+  // SIGN IN
+  async function handleSignin(e) {
     e.preventDefault();
-    setLoading(true);
-    const form = new FormData(e.target);
-    const email = form.get("email");
-    const password = form.get("password");
+    const email = e.target.email.value;
+    const password = e.target.password.value;
 
-    try {
-      if (mode === "login") {
-        const { error } = await supabase.auth.signInWithPassword({ email, password });
-        if (error) throw error;
-        notify("Logged in");
-      } else {
-        const { error } = await supabase.auth.signUp({ email, password });
-        if (error) throw error;
-        notify("Account created. Check your email if confirmation needed.");
-      }
+    const { error } = await supabase.auth.signInWithPassword({ email, password });
 
-      // redirect after auth
-      const redirect = localStorage.getItem("afterAuth") || "/dashboard";
-      router.push(redirect);
-    } catch (err) {
-      notify(err.message || "Auth error", "error");
-    } finally {
-      setLoading(false);
-    }
+    if (error) alert(error.message);
+    else window.location.href = "/dashboard";
   }
 
   return (
-    <div className="auth-wrap">
-      <div className="auth-card">
-        <h2>{mode === "login" ? "Sign in" : "Create account"}</h2>
+    <>
+      {/* load your original js for animations */}
+      <Script src="/login.js" strategy="afterInteractive" />
 
-        <form onSubmit={handleSubmit} className="auth-form">
-          <input name="email" type="email" placeholder="Email" required />
-          <input name="password" type="password" placeholder="Password" required />
-          <button className="btn" type="submit" disabled={loading}>
-            {loading ? "Please wait..." : mode === "login" ? "Sign in" : "Sign up"}
-          </button>
-        </form>
+      <div className="container" id="container">
 
-        <p className="muted" style={{marginTop:10}}>
-          {mode === "login" ? "Don't have an account?" : "Already have an account?"}
-          <button className="link-btn" onClick={() => setMode(mode === "login" ? "signup" : "login")}>
-            {mode === "login" ? " Sign up" : " Sign in"}
-          </button>
-        </p>
+        {/* SIGN UP */}
+        <div className="form-container sign-up-container">
+          <form onSubmit={handleSignup}>
+            <h1>Create Account</h1>
+            <input name="email" type="email" placeholder="Email" required />
+            <input name="password" type="password" placeholder="Password" required />
+            <button type="submit">Sign Up</button>
+          </form>
+        </div>
+
+        {/* SIGN IN */}
+        <div className="form-container sign-in-container">
+          <form onSubmit={handleSignin}>
+            <h1>Sign In</h1>
+            <input name="email" type="email" placeholder="Email" required />
+            <input name="password" type="password" placeholder="Password" required />
+            <button type="submit">Sign In</button>
+          </form>
+        </div>
+
+        {/* RIGHT SLIDING PANEL */}
+        <div className="overlay-container">
+          <div className="overlay">
+
+            <div className="overlay-panel overlay-left">
+              <h1>Welcome Back!</h1>
+              <p>Already have an account?</p>
+              <button className="ghost" id="signIn">Sign In</button>
+            </div>
+
+            <div className="overlay-panel overlay-right">
+              <h1>Hello Friend!</h1>
+              <p>New here? Create an account</p>
+              <button className="ghost" id="signUp">Sign Up</button>
+            </div>
+
+          </div>
+        </div>
+
       </div>
-
-      {toast && <Toast message={toast.msg} type={toast.type} />}
-    </div>
+    </>
   );
 }
-

@@ -16,12 +16,21 @@ export default function Dashboard() {
   const [files, setFiles] = useState([]);
   const [message, setMessage] = useState("");
 
-  useEffect(() => {
-    supabase.auth.getUser().then((res) => {
-      if (res?.data?.user) setUser(res.data.user);
-    });
+useEffect(() => {
+  async function loadUser() {
+    const res = await supabase.auth.getUser();
+    if (res?.data?.user) {
+      setUser(res.data.user);
+    }
+  }
+  loadUser();
+}, []);
+
+useEffect(() => {
+  if (user?.id) {
     fetchFiles();
-  }, []);
+  }
+}, [user]);
 
   async function fetchFiles() {
     const { data, error } = await supabase.storage
@@ -178,4 +187,5 @@ export default function Dashboard() {
     </div>
   );
 }
+
 

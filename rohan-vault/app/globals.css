@@ -1,0 +1,36 @@
+/* app/globals.css (very small reset + theme variables) */
+:root{
+  --bg:#071022;
+  --card:#0f1b29;
+  --muted:#9aa6b2;
+  --accent:#ff4b2b;
+  --btn:#ff6b58;
+  --glass: rgba(255,255,255,0.02);
+  color-scheme: dark;
+  color: #e6eef6;
+  font-family: Inter, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+}
+
+html.light {
+  --bg: #ffffff;
+  --card: #f5f7fb;
+  --muted: #495057;
+  --accent: #ff4b2b;
+  --btn: #ff6b58;
+  --glass: rgba(0,0,0,0.03);
+  color-scheme: light;
+  color: #0b1320;
+}
+
+*{box-sizing:border-box}
+body{
+  margin:0;
+  background:var(--bg);
+  min-height:100vh;
+  font-size:16px;
+  -webkit-font-smoothing:antialiased;
+  -moz-osx-font-smoothing:grayscale;
+}
+a{color:inherit}
+button{cursor:pointer}
+.container{max-width:980px;margin:36px auto;padding:0 18px;}

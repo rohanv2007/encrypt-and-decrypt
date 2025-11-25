@@ -33,15 +33,18 @@ useEffect(() => {
 }, [user]);
 
   async function fetchFiles() {
-    const { data, error } = await supabase.storage
-      .from("encrypted-files")
-      .list(user?.id || "", {
-        limit: 200,
-        sortBy: { column: "created_at", order: "desc" },
-      });
+  if (!user?.id) return;
 
-    if (!error) setFiles(data || []);
-  }
+  const { data, error } = await supabase.storage
+    .from("encrypted-files")
+    .list(user.id, {
+      limit: 200,
+      sortBy: { column: "created_at", order: "desc" },
+    });
+
+  if (!error) setFiles(data || []);
+}
+
 
   async function handleEncryptUpload(e) {
     e.preventDefault();
@@ -187,5 +190,6 @@ useEffect(() => {
     </div>
   );
 }
+
 
 
